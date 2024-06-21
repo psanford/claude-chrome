@@ -3,16 +3,23 @@
 <head>
   <title>Page Content Q&A</title>
   <style>
-    body { width: 300px; padding: 10px; }
-    textarea { width: 100%; margin-bottom: 10px; }
-    #response { white-space: pre-wrap; }
+    body { width: 400px; height: 500px; padding: 10px; display: flex; flex-direction: column; }
+    #conversation { flex-grow: 1; overflow-y: auto; margin-bottom: 10px; }
+    .message { margin-bottom: 10px; padding: 5px; border-radius: 5px; }
+    .user { background-color: #e6f2ff; text-align: right; }
+    .assistant { background-color: #f0f0f0; }
+    #inputArea { display: flex; }
+    #question { flex-grow: 1; margin-right: 10px; }
+    #settingsLink { margin-top: 10px; }
   </style>
 </head>
 <body>
-  <textarea id="question" rows="3" placeholder="Enter your question"></textarea>
-  <button id="submit">Ask Claude</button>
-  <div id="response"></div>
-  <p><a href="#" id="openSettings">Settings</a></p>
+  <div id="conversation"></div>
+  <div id="inputArea">
+    <textarea id="question" rows="3" placeholder="Enter your question"></textarea>
+    <button id="submit">Ask Claude</button>
+  </div>
+  <p id="settingsLink"><a href="#" id="openSettings">Settings</a></p>
   <script src="popup.js"></script>
 </body>
 </html>
