@@ -1,21 +1,48 @@
+var modelName = 'claude-3-5-sonnet-20240620';
+
 document.addEventListener('DOMContentLoaded', function() {
   const questionInput = document.getElementById('question');
-  const apiKeyInput = document.getElementById('apiKey');
   const submitButton = document.getElementById('submit');
   const responseDiv = document.getElementById('response');
+  const openSettingsLink = document.getElementById('openSettings');
+
+  openSettingsLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    chrome.runtime.openOptionsPage();
+  });
+
+  // Check for saved API key on popup open
+  chrome.storage.sync.get('apiKey', function(data) {
+    if (data.apiKey) {
+      console.log('API key found:', data.apiKey.substring(0, 5) + '...');
+    } else {
+      console.log('No API key found');
+    }
+  });
 
   submitButton.addEventListener('click', async function() {
     const question = questionInput.value;
-    const apiKey = apiKeyInput.value;
 
-    if (!question || !apiKey) {
-      responseDiv.textContent = 'Please enter both a question and your API key.';
+    if (!question) {
+      responseDiv.textContent = 'Please enter a question.';
       return;
     }
 
     responseDiv.textContent = 'Fetching page content...';
 
     try {
+      // Get the API key from storage
+      const apiKey = await new Promise((resolve) => {
+        chrome.storage.sync.get('apiKey', function(result) {
+          resolve(result.apiKey);
+        });
+      });
+
+      if (!apiKey) {
+        responseDiv.textContent = 'API key not set. Please go to Settings to set your API key.';
+        return;
+      }
+
       // Get the active tab
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
@@ -36,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
           'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20240620',
+          model: modelName,
           max_tokens: 1024,
           messages: [
             { role: 'user', content: `Here's the content of a web page: ${pageContent}\n\nQuestion: ${question}` }
