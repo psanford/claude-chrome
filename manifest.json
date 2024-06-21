@@ -1,6 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Claude Q&A",
+  "icons": {
+    "16": "icon_16.png",
+    "48": "icon_48.png",
+    "128": "icon_128.png"
+  },
   "version": "1.0",
   "description": "Ask Claude questions about the current web page",
   "permissions": ["activeTab", "scripting", "storage", "tabs"],
