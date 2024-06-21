@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const submitButton = document.getElementById('submit');
   const conversationDiv = document.getElementById('conversation');
   const openSettingsLink = document.getElementById('openSettings');
-  const modelName = 'claude-3-5-sonnet-20240620';
+  let selectedModel = 'claude-3-5-sonnet-20240620'; // Default model
   let messages = [];
   let pageContent = '';
   let currentTabId;
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         body: JSON.stringify({
           system: `You are a browser extension chat bot. You and the user will have a discussion about the contents of this web page. Contents: ${pageContent}`,
-          model: modelName,
+          model: selectedModel, // Use the selected model
           max_tokens: 1024,
           messages: messages,
           stream: true
@@ -176,6 +176,13 @@ document.addEventListener('DOMContentLoaded', function() {
     currentTabId = tab.id;
     currentUrl = tab.url;
     loadChatHistory(currentTabId, currentUrl);
+
+    // Load selected model
+    chrome.storage.sync.get('selectedModel', function(data) {
+      if (data.selectedModel) {
+        selectedModel = data.selectedModel;
+      }
+    });
   }
 
   // Listen for tab updates

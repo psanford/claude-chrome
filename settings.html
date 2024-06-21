@@ -4,12 +4,17 @@
   <title>Page Content Q&A Settings</title>
   <style>
     body { width: 300px; padding: 10px; }
-    input { width: 100%; margin-bottom: 10px; }
+    input, select { width: 100%; margin-bottom: 10px; }
   </style>
 </head>
 <body>
   <h2>Settings</h2>
   <input type="text" id="apiKey" placeholder="Enter your Claude API key">
+  <select id="modelSelect">
+    <option value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet</option>
+    <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+    <option value="claude-3-haiku-20240307">Claude 3 Haiku</option>
+  </select>
   <button id="save">Save</button>
   <div id="status"></div>
   <script src="settings.js"></script>
