@@ -15,6 +15,20 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.runtime.openOptionsPage();
   });
 
+  // Focus on the question input when the popup opens
+  questionInput.focus();
+
+  // Handle key press events for the question input
+  questionInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Prevent default to avoid newline insertion
+      submitButton.click(); // Trigger the submit button click
+    } else if (e.key === 'Enter' && e.shiftKey) {
+      // Allow Shift+Enter to insert a newline
+      // The default behavior will insert a newline, so we don't need to do anything here
+    }
+  });
+
   // Load chat history when the popup opens
   initializePopup();
 
@@ -98,6 +112,9 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
       addMessageToConversation('assistant', `Error: ${error.message}`);
     }
+
+    // Refocus on the question input after submission
+    questionInput.focus();
   });
 
   function addMessageToConversation(role, content) {
