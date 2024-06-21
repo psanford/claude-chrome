@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Page Content Q&A</title>
+  <style>
+    body { width: 300px; padding: 10px; }
+    textarea, input { width: 100%; margin-bottom: 10px; }
+    #response { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <textarea id="question" rows="3" placeholder="Enter your question"></textarea>
+  <input type="text" id="apiKey" placeholder="Enter your Claude API key">
+  <button id="submit">Ask Claude</button>
+  <div id="response"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

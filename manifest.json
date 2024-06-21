@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Claude Q&A",
+  "version": "1.0",
+  "description": "Ask questions about the current web page using Claude",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
