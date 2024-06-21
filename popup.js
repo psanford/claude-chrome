@@ -6,11 +6,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const modelName = 'claude-3-5-sonnet-20240620';
   let messages = [];
   let pageContent = '';
+  let currentTabId;
+  let currentUrl;
 
   openSettingsLink.addEventListener('click', function(e) {
     e.preventDefault();
     chrome.runtime.openOptionsPage();
   });
+
+  // Load chat history when the popup opens
+  initializePopup();
 
   submitButton.addEventListener('click', async function() {
     const question = questionInput.value.trim();
@@ -88,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       messages.push({ role: 'assistant', content: assistantResponse });
+      saveChatHistory();
       scrollToBottom();
     } catch (error) {
       addMessageToConversation('assistant', `Error: ${error.message}`);
@@ -122,4 +128,56 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     return result;
   }
+
+  // New function to generate a unique key for each chat history
+  function getChatHistoryKey(tabId, url) {
+    return `chatHistory_${tabId}_${new URL(url).hostname}`;
+  }
+
+  // Updated function to save chat history
+  function saveChatHistory() {
+    const key = getChatHistoryKey(currentTabId, currentUrl);
+    chrome.storage.local.set({ [key]: messages }, function() {
+      if (chrome.runtime.lastError) {
+        console.error('Error saving chat history:', chrome.runtime.lastError);
+      }
+    });
+  }
+
+  // Updated function to load chat history
+  function loadChatHistory(tabId, url) {
+    const key = getChatHistoryKey(tabId, url);
+    chrome.storage.local.get(key, function(result) {
+      if (chrome.runtime.lastError) {
+        console.error('Error loading chat history:', chrome.runtime.lastError);
+      } else if (result[key]) {
+        messages = result[key];
+        conversationDiv.innerHTML = ''; // Clear existing conversation
+        messages.forEach(message => {
+          addMessageToConversation(message.role, message.content);
+        });
+      } else {
+        // No existing history for this tab/URL combination
+        messages = [];
+        conversationDiv.innerHTML = '';
+      }
+    });
+  }
+
+  // New function to initialize the popup
+  async function initializePopup() {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    currentTabId = tab.id;
+    currentUrl = tab.url;
+    loadChatHistory(currentTabId, currentUrl);
+  }
+
+  // Listen for tab updates
+  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    if (changeInfo.status === 'complete' && tabId === currentTabId) {
+      // The current tab has been reloaded or navigated to a new URL
+      currentUrl = tab.url;
+      loadChatHistory(currentTabId, currentUrl);
+    }
+  });
 });
