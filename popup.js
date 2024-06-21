@@ -42,8 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       messages.push({ role: 'user', content: question });
 
-      addMessageToConversation('assistant', 'Claude is thinking...');
-      const responseContainer = conversationDiv.lastElementChild;
+      const responseContainer = addMessageToConversation('assistant', 'Claude is thinking...');
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -84,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = JSON.parse(line.slice(5));
             if (data.type === 'content_block_delta') {
               assistantResponse += data.delta.text;
-              responseContainer.textContent = assistantResponse;
+              updateMessageContent(responseContainer, assistantResponse);
             }
           }
         }
@@ -103,9 +102,20 @@ document.addEventListener('DOMContentLoaded', function() {
   function addMessageToConversation(role, content) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', role);
-    messageDiv.textContent = content;
+    updateMessageContent(messageDiv, content);
     conversationDiv.appendChild(messageDiv);
     scrollToBottom();
+    return messageDiv;
+  }
+
+  function updateMessageContent(messageDiv, content) {
+    messageDiv.innerHTML = ''; // Clear existing content
+    const lines = content.split('\n');
+    lines.forEach(line => {
+      const p = document.createElement('p');
+      p.textContent = line;
+      messageDiv.appendChild(p);
+    });
   }
 
   function scrollToBottom() {
@@ -129,12 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
     return result;
   }
 
-  // New function to generate a unique key for each chat history
   function getChatHistoryKey(tabId, url) {
     return `chatHistory_${tabId}_${new URL(url).hostname}`;
   }
 
-  // Updated function to save chat history
   function saveChatHistory() {
     const key = getChatHistoryKey(currentTabId, currentUrl);
     chrome.storage.local.set({ [key]: messages }, function() {
@@ -144,7 +152,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Updated function to load chat history
   function loadChatHistory(tabId, url) {
     const key = getChatHistoryKey(tabId, url);
     chrome.storage.local.get(key, function(result) {
@@ -164,7 +171,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // New function to initialize the popup
   async function initializePopup() {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     currentTabId = tab.id;
