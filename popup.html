@@ -4,14 +4,15 @@
   <title>Page Content Q&A</title>
   <style>
     body { width: 400px; height: 500px; padding: 10px; display: flex; flex-direction: column; }
-    #conversation { flex-grow: 1; overflow-y: auto; margin-bottom: 10px; }
+    #modelInfo { margin-bottom: 10px; font-style: italic; }
+    #conversationArea { flex-grow: 1; overflow-y: auto; margin-bottom: 10px; }
     .message { margin-bottom: 10px; padding: 5px; border-radius: 5px; }
     .user { background-color: #e6f2ff; text-align: right; }
     .assistant { background-color: #f0f0f0; }
     #inputArea { display: flex; }
     #question { flex-grow: 1; margin-right: 10px; }
     #settingsLink { margin-top: 10px; }
-    
+
     /* New styles for paragraph elements */
     .message p {
       margin: 0;
@@ -23,7 +24,10 @@
   </style>
 </head>
 <body>
-  <div id="conversation"></div>
+  <div id="conversationArea">
+    <div id="modelInfo">Current Model: <span id="currentModel"></span></div>
+    <div id="conversation"></div>
+  </div>
   <div id="inputArea">
     <textarea id="question" rows="3" placeholder="Enter your question"></textarea>
     <button id="submit">Ask Claude</button>

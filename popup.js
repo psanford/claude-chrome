@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const submitButton = document.getElementById('submit');
   const conversationDiv = document.getElementById('conversation');
   const openSettingsLink = document.getElementById('openSettings');
+  const currentModelSpan = document.getElementById('currentModel');
   let selectedModel = 'claude-3-5-sonnet-20240620'; // Default model
   let messages = [];
   let pageContent = '';
@@ -53,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         body: JSON.stringify({
           system: `You are a browser extension chat bot. You and the user will have a discussion about the contents of this web page. Contents: ${pageContent}`,
-          model: selectedModel, // Use the selected model
+          model: selectedModel,
           max_tokens: 1024,
           messages: messages,
           stream: true
@@ -171,6 +172,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  function updateModelDisplay() {
+    const modelNames = {
+      'claude-3-5-sonnet-20240620': 'Claude 3.5 Sonnet',
+      'claude-3-opus-20240229': 'Claude 3 Opus',
+      'claude-3-haiku-20240307': 'Claude 3 Haiku'
+    };
+    currentModelSpan.textContent = modelNames[selectedModel] || selectedModel;
+  }
+
   async function initializePopup() {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     currentTabId = tab.id;
@@ -182,6 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (data.selectedModel) {
         selectedModel = data.selectedModel;
       }
+      updateModelDisplay();
     });
   }
 
@@ -191,6 +202,14 @@ document.addEventListener('DOMContentLoaded', function() {
       // The current tab has been reloaded or navigated to a new URL
       currentUrl = tab.url;
       loadChatHistory(currentTabId, currentUrl);
+    }
+  });
+
+  // Listen for changes in the selected model
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
+    if (namespace === 'sync' && changes.selectedModel) {
+      selectedModel = changes.selectedModel.newValue;
+      updateModelDisplay();
     }
   });
 });
