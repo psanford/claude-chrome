@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Focus on the question input when the popup opens
   questionInput.focus();
 
+  // Save text field content as it changes
+  questionInput.addEventListener('input', function() {
+    saveTextFieldContent();
+  });
+
   // Handle key press events for the question input
   questionInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -42,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     addMessageToConversation('user', question);
     questionInput.value = '';
+    saveTextFieldContent(); // Clear saved content after submission
 
     try {
       const apiKey = await getApiKey();
@@ -203,6 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
     currentTabId = tab.id;
     currentUrl = tab.url;
     loadChatHistory(currentTabId, currentUrl);
+    loadTextFieldContent();
 
     // Load selected model
     chrome.storage.sync.get('selectedModel', function(data) {
@@ -229,4 +236,35 @@ document.addEventListener('DOMContentLoaded', function() {
       updateModelDisplay();
     }
   });
+
+  function saveTextFieldContent() {
+    const key = `textFieldContent_${currentTabId}_${new URL(currentUrl).hostname}`;
+    const content = questionInput.value;
+    if (content) {
+      chrome.storage.local.set({ [key]: content }, function() {
+        if (chrome.runtime.lastError) {
+          console.error('Error saving text field content:', chrome.runtime.lastError);
+        }
+      });
+    } else {
+      // If content is empty, remove the key from storage
+      chrome.storage.local.remove(key, function() {
+        if (chrome.runtime.lastError) {
+          console.error('Error removing text field content:', chrome.runtime.lastError);
+        }
+      });
+    }
+  }
+
+  function loadTextFieldContent() {
+    const key = `textFieldContent_${currentTabId}_${new URL(currentUrl).hostname}`;
+    chrome.storage.local.get(key, function(result) {
+      if (chrome.runtime.lastError) {
+        console.error('Error loading text field content:', chrome.runtime.lastError);
+      } else if (result[key]) {
+        questionInput.value = result[key];
+      }
+    });
+  }
+
 });
