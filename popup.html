@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Page Content Q&A</title>
+  <title>Claude Webpage Content Q&A</title>
   <style>
     body { width: 400px; height: 500px; padding: 10px; display: flex; flex-direction: column; }
     #modelInfo { margin-bottom: 10px; font-style: italic; }
@@ -12,14 +12,43 @@
     #inputArea { display: flex; }
     #question { flex-grow: 1; margin-right: 10px; }
     #settingsLink { margin-top: 10px; }
-
-    /* New styles for paragraph elements */
     .message p {
       margin: 0;
       padding: 2px 0;
     }
     .user p {
       text-align: right;
+    }
+    .code-container {
+      position: relative;
+      margin: 10px 0;
+    }
+    pre {
+      background-color: #f4f4f4;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      overflow-x: auto;
+    }
+    code {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .copy-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .copy-button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>

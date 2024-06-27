@@ -134,12 +134,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function updateMessageContent(messageDiv, content) {
     messageDiv.innerHTML = ''; // Clear existing content
-    const lines = content.split('\n');
-    lines.forEach(line => {
-      const p = document.createElement('p');
-      p.textContent = line;
-      messageDiv.appendChild(p);
+    const codeBlockRegex = /```[\s\S]*?```/g;
+    const parts = content.split(codeBlockRegex);
+    const codeBlocks = content.match(codeBlockRegex) || [];
+
+    parts.forEach((part, index) => {
+      if (part.trim()) {
+        const textParagraph = document.createElement('p');
+        textParagraph.textContent = part;
+        messageDiv.appendChild(textParagraph);
+      }
+
+      if (codeBlocks[index]) {
+        const codeBlock = codeBlocks[index].slice(3, -3); // Remove ``` from start and end
+        const codeContainer = document.createElement('div');
+        codeContainer.className = 'code-container';
+        const pre = document.createElement('pre');
+        const code = document.createElement('code');
+        code.textContent = codeBlock.trim();
+        pre.appendChild(code);
+        codeContainer.appendChild(pre);
+        addCopyButton(codeContainer, codeBlock.trim());
+        messageDiv.appendChild(codeContainer);
+      }
     });
+  }
+
+  function addCopyButton(codeContainer, codeText) {
+    const copyButton = document.createElement('button');
+    copyButton.textContent = 'Copy';
+    copyButton.className = 'copy-button';
+    copyButton.addEventListener('click', () => {
+      navigator.clipboard.writeText(codeText).then(() => {
+        copyButton.textContent = 'Copied!';
+        setTimeout(() => {
+          copyButton.textContent = 'Copy';
+        }, 2000);
+      });
+    });
+    codeContainer.appendChild(copyButton);
   }
 
   function scrollToBottom() {
