@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         body: JSON.stringify({
           system: `You are a browser extension chat bot. You and the user will have a discussion about the contents of this web page. Contents: ${pageContent}`,
           model: selectedModel,
-          max_tokens: 1024,
+          max_tokens: 4096,
           messages: messages,
           stream: true
         })
