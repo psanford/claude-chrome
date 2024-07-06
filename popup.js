@@ -135,10 +135,64 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateMessageContent(messageDiv, content) {
     messageDiv.innerHTML = ''; // Clear existing content
     const lines = content.split('\n');
+    let isCodeBlock = false;
+    let codeBlockContent = '';
+
     lines.forEach(line => {
-      const p = document.createElement('p');
-      p.textContent = line;
-      messageDiv.appendChild(p);
+      if (line.trim().startsWith('```')) {
+        if (isCodeBlock) {
+          // End of code block
+          const codeElement = createCodeBlock(codeBlockContent);
+          messageDiv.appendChild(codeElement);
+          codeBlockContent = '';
+        }
+        isCodeBlock = !isCodeBlock;
+      } else if (isCodeBlock) {
+        codeBlockContent += line + '\n';
+      } else {
+        const p = document.createElement('p');
+        p.textContent = line;
+        messageDiv.appendChild(p);
+      }
+    });
+
+    // If there's any remaining code block content
+    if (codeBlockContent) {
+      const codeElement = createCodeBlock(codeBlockContent);
+      messageDiv.appendChild(codeElement);
+    }
+  }
+
+  function createCodeBlock(content) {
+    const preElement = document.createElement('pre');
+    const codeElement = document.createElement('code');
+    codeElement.textContent = content.trim();
+    preElement.appendChild(codeElement);
+
+    const copyButton = document.createElement('button');
+    copyButton.textContent = 'Copy';
+    copyButton.classList.add('copy-button');
+    copyButton.addEventListener('click', () => copyCodeToClipboard(content.trim()));
+
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('code-block-wrapper');
+    wrapper.appendChild(preElement);
+    wrapper.appendChild(copyButton);
+
+    return wrapper;
+  }
+
+  function copyCodeToClipboard(code) {
+    navigator.clipboard.writeText(code).then(() => {
+      // Change button text to "Copied!" for a short time
+      const button = event.target;
+      const originalText = button.textContent;
+      button.textContent = 'Copied!';
+      setTimeout(() => {
+        button.textContent = originalText;
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
     });
   }
 
