@@ -252,9 +252,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function updateModelDisplay() {
     const modelNames = {
-      'claude-3-5-sonnet-20240620': 'Claude 3.5 Sonnet',
-      'claude-3-opus-20240229': 'Claude 3 Opus',
-      'claude-3-haiku-20240307': 'Claude 3 Haiku'
+      "claude-3-5-sonnet-20241022": 'Claude 3.5 Sonnet (202410)',
+      "claude-3-5-sonnet-20240620": 'Claude 3.5 Sonnet (202406)',
+      "claude-3-5-haiku-20241022": 'Claude 3.5 Haiku',
+      "claude-3-opus-20240229": 'Claude 3 Opus',
+      "claude-3-sonnet-20240229": 'Claude 3 Sonnet',
+      "claude-3-haiku-20240307": 'Claude 3 Haiku',
     };
     currentModelSpan.textContent = modelNames[selectedModel] || selectedModel;
   }
