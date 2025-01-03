@@ -4,6 +4,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const saveButton = document.getElementById('save');
   const statusDiv = document.getElementById('status');
 
+  // Populate model select options
+  CLAUDE_MODELS.forEach(model => {
+    const option = document.createElement('option');
+    option.value = model.id;
+    option.textContent = model.name;
+    modelSelect.appendChild(option);
+  });
+
   // Load saved API key and model
   chrome.storage.sync.get(['apiKey', 'selectedModel'], function(data) {
     if (data.apiKey) {
@@ -11,6 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (data.selectedModel) {
       modelSelect.value = data.selectedModel;
+    } else {
+      // Set default model if none is selected
+      const defaultModel = CLAUDE_MODELS.find(model => model.isDefault) || CLAUDE_MODELS[0];
+      modelSelect.value = defaultModel.id;
     }
   });
 

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const conversationDiv = document.getElementById('conversation');
   const openSettingsLink = document.getElementById('openSettings');
   const currentModelSpan = document.getElementById('currentModel');
-  let selectedModel = 'claude-3-5-sonnet-20240620'; // Default model
+  let selectedModel = CLAUDE_MODELS.find(model => model.isDefault)?.id || CLAUDE_MODELS[0].id;
   let messages = [];
   let pageContent = '';
   let currentTabId;
@@ -251,15 +251,8 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function updateModelDisplay() {
-    const modelNames = {
-      "claude-3-5-sonnet-20241022": 'Claude 3.5 Sonnet (202410)',
-      "claude-3-5-sonnet-20240620": 'Claude 3.5 Sonnet (202406)',
-      "claude-3-5-haiku-20241022": 'Claude 3.5 Haiku',
-      "claude-3-opus-20240229": 'Claude 3 Opus',
-      "claude-3-sonnet-20240229": 'Claude 3 Sonnet',
-      "claude-3-haiku-20240307": 'Claude 3 Haiku',
-    };
-    currentModelSpan.textContent = modelNames[selectedModel] || selectedModel;
+    const selectedModelInfo = CLAUDE_MODELS.find(model => model.id === selectedModel);
+    currentModelSpan.textContent = selectedModelInfo ? selectedModelInfo.name : selectedModel;
   }
 
   async function initializePopup() {
