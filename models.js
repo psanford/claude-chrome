@@ -1,8 +1,12 @@
 const CLAUDE_MODELS = [
   {
-    id: "claude-3-5-sonnet-latest",
-    name: "Claude 3.5 Sonnet (latest)",
+    id: "claude-3-7-sonnet-latest",
+    name: "Claude 3.7 Sonnet (latest)",
     isDefault: true
+  },
+  {
+    id: "claude-3-7-sonnet-20250219",
+    name: "Claude 3.7 Sonnet"
   },
   {
     id: "claude-3-5-haiku-latest",
