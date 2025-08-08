@@ -8,9 +8,11 @@
   },
   "version": "1.0",
   "description": "Ask Claude questions about the current web page",
-  "permissions": ["activeTab", "scripting", "storage", "tabs"],
-  "action": {
-    "default_popup": "popup.html"
+  "permissions": ["scripting", "storage", "tabs", "sidePanel"],
+  "host_permissions": ["<all_urls>"],
+  "action": {},
+  "side_panel": {
+    "default_path": "sidebar.html"
   },
   "options_page": "settings.html",
   "background": {

@@ -16,3 +16,13 @@ function clearAllChatHistoriesAndTextFields() {
 }
 
 chrome.runtime.onStartup.addListener(clearAllChatHistoriesAndTextFields);
+
+// Handle extension icon click to open side panel
+chrome.action.onClicked.addListener((tab) => {
+  chrome.sidePanel.open({ tabId: tab.id });
+});
+
+// Set up side panel to be available for all sites
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+});
